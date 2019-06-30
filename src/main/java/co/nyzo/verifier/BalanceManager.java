@@ -8,7 +8,7 @@ import java.util.*;
 
 public class BalanceManager {
 
-    private static final List<String> list = Arrays.asList("b5fd3e8d789a5055-091e46db881f1b74-1b0ab6f8d65b21ae-88cc543dfd92173b", "15fa0cd9b1619538-58d097090621a4de-24063449b66d4dac-2af90543389a9f89",
+    private static final List<String> devFundAddressList = Arrays.asList("b5fd3e8d789a5055-091e46db881f1b74-1b0ab6f8d65b21ae-88cc543dfd92173b", "15fa0cd9b1619538-58d097090621a4de-24063449b66d4dac-2af90543389a9f89",
                                                           "4ddefde6a0c5abf7-8868f2c13803f934-c45a0f675f69fd75-0d6578046617eec5", "1459eed3a8d3bbf1-d1faaf553f086033-6615d10e0ebd44b5-f8b5c94418457a43",
                                                           "e917bf3cf77b2c8e-100a3715500397ab-cb89f99963a174e1-3c5b4e11cbb72852", "684d8b1bfedb0bb3-19954ba3e330d825-77ed7ffa45fdf468-cfe01accac6db89d",
                                                           "f83cf2e0e3abc5df-01bddd67fead3099-bff7efaf467010f5-3b654f293a9a9887", "363a10a67dfac9a2-ac59dc7a1fd03e37-05665f01560d399c-78a367dc21ce94ce",
@@ -532,6 +532,7 @@ public class BalanceManager {
 
         // Protect the seed-funding account from all transactions other than the transactions published on day 1.
         protectSeedFundingAccount(dedupedTransactions, blockHeight);
+        protectDevFundingAccounts(dedupedTransactions, blockHeight);
 
         // Remove any transactions with invalid signatures.
         for (int i = dedupedTransactions.size() - 1; i >= 0; i--) {
@@ -719,6 +720,19 @@ public class BalanceManager {
 
         return numberOfTransactions;
     }
+    
+    private static void protectDevFundingAccounts(List<Transaction> dedupedTransactions, long blockHeight) {
+        for (int y = 0; y < devFundAddressList.size(); y++) {
+            private static byte[] SelectedAddress = ByteUtil.byteArrayFromHexString(devFundAddressList.get(y), FieldByteSize.identifier);
+            for (int i = dedupedTransactions.size() - 1; i >= 0; i--) {
+                Transaction transaction = dedupedTransactions.get(i);
+                if (ByteUtil.arraysAreEqual(transaction.getSenderIdentifier(), SelectedAddress)) {
+                        dedupedTransactions.remove(i);
+                    }
+                }
+            }
+        }
+    }
 
     private static void protectSeedFundingAccount(List<Transaction> dedupedTransactions, long blockHeight) {
 
@@ -780,5 +794,6 @@ public class BalanceManager {
                 }
             }
         }
+        
     }
 }
